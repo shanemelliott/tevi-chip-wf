@@ -1,0 +1,4 @@
+﻿serial=
+saml-endpoint=https://services.eauth.va.gov:9301/STS/RequestSecurityToken
+jwt-endpoint=https://staff.apps.va.gov/sts/ssoi/v1/jwt
+referer=https://vse.va.gov

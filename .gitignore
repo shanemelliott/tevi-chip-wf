@@ -1,0 +1,13 @@
+.DS_Store
+node_modules
+config.js
+credentials.json
+Nccredentials.js
+token.json
+*.key
+*.exe
+*.properties
+*.dll
+env.js
+
+
