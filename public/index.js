@@ -11,9 +11,15 @@ $(function () {
  var $steps = $('#steps');
  var $editLists = $('#editLists');
  //EditLists
+ var $addItem = $('#addItem');
+ var $remItem = $('#remItem');
+ var $saveList = $('#saveList');
+var $roleName = $('#roleName');
+
 
 var steps=[]
 var stepData = []
+var curClincListData = {}
 var duz="520824652"
 document.getElementById("listDisplay").style.display = "none"
 document.getElementById("dataDisplay").style.display = "none"
@@ -172,18 +178,28 @@ function setSteps(data){
       $.getJSON(
         'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list-items/'+document.getElementById('listId').value
         ,function (response) {
-          console.log(response)
+          
+          curClincListData=response.payload
+          console.log(curClincListData)
          var newOptionsSelect
     response.payload.forEach((e,i) => {
-          newOptionsSelect = newOptionsSelect + '<option value="'+e.id+'">'+e.name+ '</option>';
+          newOptionsSelect = newOptionsSelect + '<option value="'+e.ien+'">'+e.name+ '</option>';
         })
         $('#currClinGrp')
         .empty()
         .append( newOptionsSelect )
         
       })
-
-
+      //add role
+      $.getJSON(
+        'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/lists'
+        ,function (response) {
+       
+       var result = $.grep(response.payload, function(e){ return e.id == document.getElementById('listId').value; });
+       console.log(result[0].name)
+       $('#roleName').val(result[0].name)
+        
+      })
 
 
   })
@@ -195,7 +211,111 @@ $getToken.on('click',function(){
   })
     
 });
+$addItem.on('click',function(){
+  var newVal =  $('#avialClinGrp').val()
+  var newText= $('#avialClinGrp option:selected').text()
 
+
+
+  if($("#currClinGrp option[value='" + newVal + "']").val() === undefined){
+    $('#currClinGrp').append('<option value="'+newVal+'">'+newText+ '</option>')
+  }else{
+   
+    alert('Already There')
+  }
+
+})
+
+$remItem.on('click',function(){
+ $("#currClinGrp option[value='"+$('#currClinGrp').val()+"']").remove();
+ })
+ 
+ $saveList.on('click',function(){
+    console.log($("#currClinGrp"))
+    //Get Values in List
+    var currClinGrp =[]
+    $('#currClinGrp option').each(function(){
+      var obj={}
+      var newVal =$(this).val()
+      var newText= $(this).text()
+      obj.name=newText
+      obj.ien=newVal
+      currClinGrp.push(obj)
+    })
+    //compare
+    function comparer(otherArray){
+      return function(current){
+        return otherArray.filter(function(other){
+          return other.ien == current.ien && other.name == current.name
+        }).length == 0;
+      }
+    }
+   
+
+    var curClincListComp=[]
+    curClincListData.forEach(function(e){
+      var obj={}
+        obj.name=e.name
+        obj.ien=e.ien
+        curClincListComp.push(obj)
+    })
+    console.log(curClincListComp)
+    console.log(currClinGrp)
+    var deleted = curClincListComp.filter(comparer(currClinGrp));
+    var added = currClinGrp.filter(comparer(curClincListComp));
+   
+    console.log(deleted)
+    console.log(added)
+
+    if (added.length > 0){
+      added.forEach(function(e){
+        $.getJSON('/token',function (tokenResponse) {
+          token=tokenResponse
+         }).then(function(token){
+            $.ajaxSetup({
+              headers : {
+                'Authorization' : 'Bearer '+token.token,
+              }
+            });
+            $.ajax({
+              type: 'PUT',
+              url: 'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list-item/'+document.getElementById('listId').value+'/'+e.ien+'/'+encodeURI(e.name),
+              contentType: 'application/json',
+                     }).done(function (data) {
+                      console.log('data');
+                    })
+        })
+      })
+    }
+    if(deleted.length >0){
+
+       
+
+      deleted.forEach(function(e){
+        var result = $.grep(curClincListData, function(f){ return f.ien == e.ien; });
+        console.log(result)
+        $.getJSON('/token',function (tokenResponse) {
+          token=tokenResponse
+         }).then(function(token){
+            $.ajaxSetup({
+              headers : {
+                'Authorization' : 'Bearer '+token.token,
+              }
+            });
+            $.ajax({
+              type: 'DELETE',
+              url: 'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list-item/'+result[0].listId+'/'+result[0].id,
+              contentType: 'application/json',
+                     }).done(function (data) {
+                      console.log('data');
+                    })
+        })
+      })
+
+
+    }
+    
+ })
 
 $getList.on('click',function(){
 

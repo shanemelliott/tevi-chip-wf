@@ -196,7 +196,7 @@ app.get('/lists', (request, response) => {
 app.get('/steps', (request, response) => {
 
   let token = jwtfaker.createToken(0);
-   got('http://internal-clinician-workflow-api-lb-dev-1492574551.us-gov-west-1.elb.amazonaws.com/api/v1/workflows',
+   got('https://dev.vse-wf-api.va.gov/api/v1/workflows',
     {
       headers:{'authorization':'Bearer '+token}
     }).then(function(data){
@@ -213,7 +213,7 @@ app.get('/list', (request, response) => {
 console.log(request.query.listId)
 console.log(request.headers)
   let token = jwtfaker.createToken(0);
-  let url='http://internal-clinician-workflow-api-lb-dev-1492574551.us-gov-west-1.elb.amazonaws.com/api/v1/vista-sites/500/users/520824652/appointments?clinic_list_id='+request.query.listId
+  let url='https://dev.vse-wf-api.va.gov/api/v1/vista-sites/500/users/520824652/appointments?clinic_list_id='+request.query.listId
   console.log(url)  
   got(url,
     {
@@ -240,5 +240,6 @@ var port = process.env.PORT || 4567;
 console.log(port)
 server.listen(port, () => {
   console.log('Express server running on *:' + port);
+  console.log('using '+config.env+ ' env')
 });
 
