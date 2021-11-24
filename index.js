@@ -45,7 +45,7 @@ app.get('/token', (request, response) => {
         if (err) {
           return response.send(JSON.stringify(err));
         }
-        console.log(payload)
+ 
         return  response.send(JSON.stringify(payload));
     });
 
@@ -53,7 +53,7 @@ app.get('/token', (request, response) => {
 });
 
 app.get('/vistaData', (request, response) => {
-  console.log(config.key)
+
  
    got.post('https://staging.api.vetext.va.gov/vista-api/api/auth/token',
 
@@ -74,8 +74,7 @@ app.get('/vistaData', (request, response) => {
           "jsonResult" : "FALSE",
           "parameters" : [""]
         }}).then(function(data){
-          console.log(data)
-          var jsonData = JSON.parse(data.body);
+           var jsonData = JSON.parse(data.body);
           var resp = jsonData.payload
           if (resp){
           var respArr = resp.split(String.fromCharCode(30));
@@ -158,24 +157,6 @@ const options = {
   })
 })
 
-app.post('/step', (request, response) => {
-
-  let token = jwtfaker.createToken(0);
-  console.log(request.body.ien)
-
-    /*
-    got('http://internal-clinician-workflow-api-lb-dev-1492574551.us-gov-west-1.elb.amazonaws.com/api/v1/vista-sites/500/users/520824652/clinics/'+request.body.clinicIen+'/appointments/'+request.body.ien+'/status',
-    {
-      headers:{'authorization':'Bearer '+token}
-    }).then(function(data){
-      console.log(data.body)
-      response.send(data.body)
-    }).catch(function (error) {
-      callback(error);
-      console.log(error);
-  });
-*/
-})
 
 app.get('/lists', (request, response) => {
 
@@ -210,11 +191,10 @@ app.get('/steps', (request, response) => {
 })
 
 app.get('/list', (request, response) => {
-console.log(request.query.listId)
-console.log(request.headers)
+
   let token = jwtfaker.createToken(0);
   let url='https://dev.vse-wf-api.va.gov/api/v1/vista-sites/500/users/520824652/appointments?clinic_list_id='+request.query.listId
-  console.log(url)  
+ 
   got(url,
     {
       headers:{'authorization':'Bearer '+token}
@@ -229,15 +209,9 @@ console.log(request.headers)
 })
 
 
-app.post('/status', (request, response) => {
-     console.log(request.body)
-    response.sendStatus(200)
-})
-
 var server = http.createServer(app);
  
 var port = process.env.PORT || 4567;
-console.log(port)
 server.listen(port, () => {
   console.log('Express server running on *:' + port);
   console.log('using '+config.env+ ' env')

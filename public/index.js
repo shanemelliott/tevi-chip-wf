@@ -49,16 +49,13 @@ $('form').submit(function(evt){
   alert('prevent submit'); 
 });
 function getUsers(){
-  console.log(users)
+
   var newOptionsSelect
   users.forEach((e,i) => {
     newOptionsSelect = newOptionsSelect + '<option value="'+e.secId+'">'+e.lastName+', '+e.firstName+ '</option>';
   })
   $('#userId').append( newOptionsSelect )
 }
-
-
-
 
 
 function getLists(){
@@ -76,7 +73,7 @@ function getLists(){
       'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/lists'
      //'http://localhost:4567/lists'
       ,function (response) {
-        console.log(response)
+     
        var newOptionsSelect
       response.payload.forEach((e,i) => {
         newOptionsSelect = newOptionsSelect + '<option value="'+e.id+'">'+e.name+ '  Role:  '+e.role+'</option>';
@@ -196,7 +193,7 @@ function setSteps(data){
         ,function (response) {
        
        var result = $.grep(response.payload, function(e){ return e.id == document.getElementById('listId').value; });
-       console.log(result[0].name)
+   
        $('#roleName').val(result[0].name)
         
       })
@@ -231,7 +228,7 @@ $remItem.on('click',function(){
  })
  
  $saveList.on('click',function(){
-    console.log($("#currClinGrp"))
+ 
     //Get Values in List
     var currClinGrp =[]
     $('#currClinGrp option').each(function(){
@@ -259,8 +256,7 @@ $remItem.on('click',function(){
         obj.ien=e.ien
         curClincListComp.push(obj)
     })
-    console.log(curClincListComp)
-    console.log(currClinGrp)
+
     var deleted = curClincListComp.filter(comparer(currClinGrp));
     var added = currClinGrp.filter(comparer(curClincListComp));
    
@@ -288,12 +284,9 @@ $remItem.on('click',function(){
       })
     }
     if(deleted.length >0){
-
-       
-
       deleted.forEach(function(e){
         var result = $.grep(curClincListData, function(f){ return f.ien == e.ien; });
-        console.log(result)
+       
         $.getJSON('/token',function (tokenResponse) {
           token=tokenResponse
          }).then(function(token){
@@ -510,7 +503,7 @@ function updateTable(tdata,tableTag){
             tabCell.innerHTML = tdata[i][col[j]];
          }
      }
-     //sort table by second (1) column
+     //sort table by (3rd) column
      var rows, switching, i, x, y, shouldSwitch;
   
      switching = true;
@@ -527,8 +520,8 @@ function updateTable(tdata,tableTag){
          shouldSwitch = false;
          /*Get the two elements you want to compare,
          one from current row and one from the next:*/
-         x = rows[i].getElementsByTagName("TD")[0];
-         y = rows[i + 1].getElementsByTagName("TD")[0];
+         x = rows[i].getElementsByTagName("TD")[3];
+         y = rows[i + 1].getElementsByTagName("TD")[3];
          //check if the two rows should switch place:
          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
            //if so, mark as a switch and break the loop:
