@@ -5,9 +5,12 @@ var steps=[]
 var stepData = []
 var curClincListData = {}
 var duz="520824652"
+var showState='All'
 
 document.getElementById("listDisplay").style.display = "none"
 document.getElementById("dataDisplay").style.display = "none"
+document.getElementById("showAll").style.display = "none"
+document.getElementById("showRole").style.display = "none"
 
 var users = [
   {"secId": "1234567890","DUZ":"520824652", "lastName": "TESTER0", "firstName": "JOHN", "email": "john.tester0@va.gov", "samAccountName": "vhatst1234567890", "jti": "c1211760-a083-4088-a55f-e02691afe1c3"},
@@ -100,15 +103,44 @@ function setSteps(data){
       steps='<select class="form-control" id="stepSelect" style="width:240px;">'+StepsSelect+'</select>'
 }
 
+function tableFilter(){
+  var data=showState
+  if(data=='All'){
+    $("#dataTable").find("tr").show();
+    document.getElementById("showAll").style.display = "none"
+    document.getElementById("showRole").style.display = ""
+  }else{
+    document.getElementById("showAll").style.display = ""
+    document.getElementById("showRole").style.display = "none"
+    var rows = $("#dataTable").find("tr").hide();
+    //var data='Clerk'.toLowerCase()
+    data=data.toLowerCase()
+    rows.each(function(i,x){
+      
+      var td = x.getElementsByTagName("td")[5];
+      if(td){
+        txtValue = td.textContent || td.innerText;
+        if(txtValue.toLowerCase().indexOf(data)>-1){
+          x.style.display = ""
+        
+        }else{
+          x.style.display="none"
+        
+        }
+      }
+    })
+  }
+ }
+
 $('#steps').on('click',function(){
 })
 
 $('#editLists').on('click',function(){
     //show clinic edit div
-    var listElement = document.getElementById("listDisplay")
-    var dataElement = document.getElementById("dataDisplay")
-    dataElement.style.display="none"
-    listElement.style.display="block"
+    document.getElementById("dataDisplay").style.display = "none"
+    document.getElementById("listDisplay").style.display = "block"
+    document.getElementById("showAll").style.display = "none"
+    document.getElementById("showRole").style.display = "none"
     //get clinics from Vista Service
     //will replace later whe there is an endpoint. 
     $.getJSON('/vistaData',function (response) {
@@ -127,8 +159,8 @@ $('#editLists').on('click',function(){
     $.getJSON(
         'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list-items/'+document.getElementById('listId').value
         ,function (response) {
-        curClincListData=response.payload
-        console.log(curClincListData)
+        curClincListData.list=response.payload
+       
         var newOptionsSelect
         response.payload.forEach((e,i) => {
           newOptionsSelect = newOptionsSelect + '<option value="'+e.ien+'">'+e.name+ '</option>';
@@ -137,13 +169,7 @@ $('#editLists').on('click',function(){
         .empty()
         .append( newOptionsSelect )
       })
-      //add role
-      $.getJSON(
-        'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/lists'
-        ,function (response) {
-          var result = $.grep(response.payload, function(e){ return e.id == document.getElementById('listId').value; });
-          $('#roleName').val(result[0].name)
-      })
+     
   })
 
   $('#getToken').on('click',function(){
@@ -154,6 +180,15 @@ $('#editLists').on('click',function(){
   })
     
 });
+$('#showAll').on('click',function(){
+ 
+  showState='All'
+  tableFilter()
+})
+$('#showRole').on('click',function(){
+  showState=curClincListData.details.role
+  tableFilter()
+})
 
 $('#addItem').on('click',function(){
   var newVal =  $('#avialClinGrp').val()
@@ -189,7 +224,7 @@ $('#saveList').on('click',function(){
       }
     }
   var curClincListComp=[]
-  curClincListData.forEach(function(e){
+  curClincListData.list.forEach(function(e){
     var obj={}
     obj.name=e.name
     obj.ien=e.ien
@@ -216,15 +251,13 @@ $('#saveList').on('click',function(){
           type: 'PUT',
           url: 'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list-item/'+document.getElementById('listId').value+'/'+e.ien+'/'+encodeURI(e.name),
           contentType: 'application/json',
-        }).done(function (data) {
-          console.log('data');
-          })
+        })
         })
       })
     }
     if(deleted.length >0){
       deleted.forEach(function(e){
-      var result = $.grep(curClincListData, function(f){ return f.ien == e.ien; });
+      var result = $.grep(curClincListData.list, function(f){ return f.ien == e.ien; });
       $.getJSON('/token',function (tokenResponse) {
         token=tokenResponse
       }).then(function(token){
@@ -237,19 +270,59 @@ $('#saveList').on('click',function(){
           type: 'DELETE',
           url: 'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list-item/'+result[0].id,
           contentType: 'application/json',
-        }).done(function (data) {
-          console.log('data');
         })
       })
   })
  }
+ //update Details.
+
+ var data = {
+  'id': curClincListData.details.id,
+  'name': curClincListData.details.name,
+  'role': $('#roleName').val(),
+  'stationId': curClincListData.details.stationId,
+  'userDefault': curClincListData.details.userDefault,
+  'userId': curClincListData.details.userId
+}
+
+
+
+ $.getJSON('/token',function (tokenResponse) {
+  token=tokenResponse
+}).then(function(token){
+ $.ajaxSetup({
+  headers : {
+    'Authorization' : 'Bearer '+token.token,
+  }
+});
+$.ajax({
+  type: 'POST',
+  url: 'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list',
+  data:JSON.stringify(data),
+  contentType: 'application/json',
+})
+
+})
+
 })
 
 $('#getList').on('click',function(){
-  var listElement = document.getElementById("listDisplay")
-  var dataElement = document.getElementById("dataDisplay")
-  dataElement.style.display="block"
-  listElement.style.display="none"
+
+document.getElementById("dataDisplay").style.display = "block"
+document.getElementById("listDisplay").style.display = "none"
+document.getElementById("showAll").style.display = "none"
+document.getElementById("showRole").style.display = "inline"
+
+ //add role
+ $.getJSON(
+  'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/lists'
+  ,function (response) {
+
+    var result = $.grep(response.payload, function(e){ return e.id == document.getElementById('listId').value; });
+    curClincListData.details = result[0]
+    $('#roleName').val(result[0].role)
+
+})
  // updateTable([],'dataTable')
   var token={}
   $.getJSON('/token',function (tokenResponse) {
@@ -266,6 +339,7 @@ $('#getList').on('click',function(){
       //'http://localhost:4567/list?listId='+document.getElementById('listId').value
       ,function (response) {
       updateTable(response.data,'dataTable')
+      tableFilter()
     }).catch(function(err){
       console.log(err)
       $('#postResult').html(JSON.stringify(err.responseText));
@@ -298,6 +372,7 @@ $("#dataTable").on('click', '#nextStep', function() {
           {
           if(data.data.attributes.current_status){
               self.find(".Step").text(data.data.attributes.current_status);
+              tableFilter()
             }
       });
   })
@@ -333,7 +408,8 @@ if(stepId>0){
           {
            
             if(data.data.attributes.current_status){
-              var clinicIen = self.find(".Step").text(data.data.attributes.current_status);
+              self.find(".Step").text(data.data.attributes.current_status);
+              tableFilter()
             }
            
       });
@@ -379,7 +455,7 @@ $("#dataTable").on('click', '#Complete', function() {
   console.log(nextStep)
 });
 
-function updateTable(tdata,tableTag){
+function updateTable(tdata,tableTag,filter){
   
     var data=[]
     var hiddenFields = ["appointmentIen","dfn","clinicIen"]
