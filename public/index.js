@@ -114,21 +114,25 @@ function tableFilter(){
     document.getElementById("showAll").style.display = ""
     document.getElementById("showRole").style.display = "none"
     var rows = $("#dataTable").find("tr").hide();
-    //var data='Clerk'.toLowerCase()
     data=data.toLowerCase()
     rows.each(function(i,x){
-      
-      var td = x.getElementsByTagName("td")[5];
-      if(td){
-        txtValue = td.textContent || td.innerText;
-        if(txtValue.toLowerCase().indexOf(data)>-1){
-          x.style.display = ""
-        
-        }else{
-          x.style.display="none"
-        
+      console.log(i,x)
+      if (i>0){
+        var td = x.getElementsByTagName("td")[5];
+        if(td){
+          txtValue = td.textContent || td.innerText;
+          if(txtValue.toLowerCase().indexOf(data)>-1){
+            x.style.display = ""
+          
+          }else{
+            x.style.display="none"
+          
+          }
         }
+      }else{
+        x.style.display = ""
       }
+     
     })
   }
  }
