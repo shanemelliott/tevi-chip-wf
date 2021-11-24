@@ -116,7 +116,6 @@ function tableFilter(){
     var rows = $("#dataTable").find("tr").hide();
     data=data.toLowerCase()
     rows.each(function(i,x){
-      console.log(i,x)
       if (i>0){
         var td = x.getElementsByTagName("td")[5];
         if(td){
