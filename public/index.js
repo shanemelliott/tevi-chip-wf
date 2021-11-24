@@ -235,7 +235,7 @@ $('#saveList').on('click',function(){
         });
         $.ajax({
           type: 'DELETE',
-          url: 'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list-item/'+result[0].listId+'/'+result[0].id,
+          url: 'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list-item/'+result[0].id,
           contentType: 'application/json',
         }).done(function (data) {
           console.log('data');

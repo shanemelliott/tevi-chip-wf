@@ -19,7 +19,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 //Functions
-
+// here for reference
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "http://localhost");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -31,7 +31,6 @@ app.use(function (req, res, next) {
 //routes
 app.get('/token', (request, response) => {
     //token faker stolen from Andy (https://github.com/department-of-veterans-affairs/octo-ssoi-jwt-dev)
- 
     if(config.env=='dev'){
         let idx = request.query.tkn;
         idx = isNaN(idx) ? 0 : idx;
