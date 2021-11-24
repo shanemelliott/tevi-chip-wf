@@ -29,10 +29,10 @@ app.use(function (req, res, next) {
 });
 
 //routes
-app.get('/token', (request, response) => {
+app.get('/token/:idx', (request, response) => {
     //token faker stolen from Andy (https://github.com/department-of-veterans-affairs/octo-ssoi-jwt-dev)
     if(config.env=='dev'){
-        let idx = request.query.tkn;
+        let idx = request.params.idx;
         idx = isNaN(idx) ? 0 : idx;
         let token = jwtfaker.createToken(idx);
         return  response.send(JSON.stringify({'token':token}));

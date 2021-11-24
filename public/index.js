@@ -6,6 +6,7 @@ var stepData = []
 var curClincListData = {}
 var duz="520824652"
 var showState='All'
+var tokenNumber = '0'
 
 document.getElementById("listDisplay").style.display = "none"
 document.getElementById("dataDisplay").style.display = "none"
@@ -43,7 +44,7 @@ function getUsers(){
 
 function getLists(){
   var token={}
-  $.getJSON('/token',function (tokenResponse) {
+  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
       token=tokenResponse
   }).then(function(token){
     $.ajaxSetup({
@@ -67,7 +68,7 @@ function getLists(){
 function getSteps(){
   var token={}
   var steps=[]
-  $.getJSON('/token',function (tokenResponse) {
+  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
       token=tokenResponse
   }).then(function(token){
     $.ajaxSetup({
@@ -175,7 +176,7 @@ $('#editLists').on('click',function(){
   $('#getToken').on('click',function(){
     //test function
     $('#postResult').html('Getting Token');
-    $.getJSON('/token',function (tokenResponse) {
+    $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
       $('#postResult').html(JSON.stringify(tokenResponse));
   })
     
@@ -239,7 +240,7 @@ $('#saveList').on('click',function(){
 
   if (added.length > 0){
       added.forEach(function(e){
-      $.getJSON('/token',function (tokenResponse) {
+      $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
         token=tokenResponse
       }).then(function(token){
         $.ajaxSetup({
@@ -258,7 +259,7 @@ $('#saveList').on('click',function(){
     if(deleted.length >0){
       deleted.forEach(function(e){
       var result = $.grep(curClincListData.list, function(f){ return f.ien == e.ien; });
-      $.getJSON('/token',function (tokenResponse) {
+      $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
         token=tokenResponse
       }).then(function(token){
         $.ajaxSetup({
@@ -287,7 +288,7 @@ $('#saveList').on('click',function(){
 
 
 
- $.getJSON('/token',function (tokenResponse) {
+ $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
   token=tokenResponse
 }).then(function(token){
  $.ajaxSetup({
@@ -325,7 +326,7 @@ document.getElementById("showRole").style.display = "inline"
 })
  // updateTable([],'dataTable')
   var token={}
-  $.getJSON('/token',function (tokenResponse) {
+  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
       token=tokenResponse
      }).then(function(token){
 
@@ -355,7 +356,7 @@ $("#dataTable").on('click', '#nextStep', function() {
   let step = stepData.find(x => x.name === thisStep);
   let nextStep = stepData[stepData.indexOf(step)+1].id
  if (nextStep){
-  $.getJSON('/token',function (tokenResponse) {
+  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
     token=tokenResponse
    }).then(function(token){
       $.ajaxSetup({
@@ -391,7 +392,7 @@ $("#dataTable").on('change', '#stepSelect', function() {
   var clinicIen = self.find(".clinicIen").text();
  // alert("Selected row values are \nappointmentIen=" + apptIen + " \ndfn=" + dfn+ " \nclinicIen=" + clinicIen+ " \nstepId=" + stepId);
 if(stepId>0){
-  $.getJSON('/token',function (tokenResponse) {
+  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
     token=tokenResponse
    }).then(function(token){
       $.ajaxSetup({
@@ -429,7 +430,7 @@ $("#dataTable").on('click', '#Complete', function() {
   let nextStep = stepData[stepData.length-1].id
   
  if (nextStep){
-  $.getJSON('/token',function (tokenResponse) {
+  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
     token=tokenResponse
    }).then(function(token){
       $.ajaxSetup({
