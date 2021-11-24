@@ -19,6 +19,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 //Functions
+
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "http://localhost");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -53,20 +54,14 @@ app.get('/token', (request, response) => {
 });
 
 app.get('/vistaData', (request, response) => {
-
- 
    got.post('https://staging.api.vetext.va.gov/vista-api/api/auth/token',
-
     {json:{
       "key":config.key,
       "stationNo": "500",
       "duz": "520824652"
     }
     }).then(function(data){
-      
-
         got.post('https://staging.api.vetext.va.gov/vista-api/api/v1/xrpc/xcte',
-
         {headers:{'authorization':'Bearer '+JSON.parse(data.body).payload.token},
         json:{
           "context" : "SDECRPC",
@@ -86,8 +81,6 @@ app.get('/vistaData', (request, response) => {
               var rec = e.split("^")
               dataArr.push(rec)
           })
-
-          var object = {}
           var list = []
           dataArr.forEach(function(e,i){
               var rec ={}
@@ -96,26 +89,17 @@ app.get('/vistaData', (request, response) => {
               })
               list.push(rec)
           })
-
-         
             response.send(list)
           }
-
         })
-
-
-
     }).catch(function (error) {
       console.log(error);
   });
-
-
-
 });
 
 
 app.get('/soap', (request, response) => {
-
+  //start of getting SAML token need to re-visit. 
     var soapRequest = "";
 
     soapRequest += "<soap:Envelope xmlns:ns1=\"http://docs.oasis-open.org/ws-sx/ws-trust/200512\" xmlns:wss=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\" xmlns:wsp=\"http://schemas.xmlsoap.org/ws/2004/09/policy\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soap:Header/> ";
@@ -159,7 +143,6 @@ const options = {
 
 
 app.get('/lists', (request, response) => {
-
   let token = jwtfaker.createToken(0);
    got('https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/lists',
     {
@@ -168,14 +151,11 @@ app.get('/lists', (request, response) => {
     
       response.send(data.body)
     }).catch(function (error) {
-     
-      console.log(error);
+     console.log(error);
   });
-
 })
 
 app.get('/steps', (request, response) => {
-
   let token = jwtfaker.createToken(0);
    got('https://dev.vse-wf-api.va.gov/api/v1/workflows',
     {
@@ -184,33 +164,25 @@ app.get('/steps', (request, response) => {
     
       response.send(data.body)
     }).catch(function (error) {
-     
       console.log(error);
   });
-
 })
 
 app.get('/list', (request, response) => {
-
   let token = jwtfaker.createToken(0);
   let url='https://dev.vse-wf-api.va.gov/api/v1/vista-sites/500/users/520824652/appointments?clinic_list_id='+request.query.listId
- 
   got(url,
     {
       headers:{'authorization':'Bearer '+token}
     }).then(function(data){
-    
       response.send(data.body)
     }).catch(function (error) {
-      
       console.log(error);
   });
-
 })
 
 
 var server = http.createServer(app);
- 
 var port = process.env.PORT || 4567;
 server.listen(port, () => {
   console.log('Express server running on *:' + port);
