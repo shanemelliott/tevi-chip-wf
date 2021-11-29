@@ -5,6 +5,7 @@ var steps=[]
 var stepData = []
 var curClincListData = {}
 var duz="520824652"
+var sta3n="500"
 var showState='All'
 var tokenNumber = '0'
 
@@ -15,12 +16,7 @@ document.getElementById("showRole").style.display = "none"
 
 var users = [
   {"secId": "1234567890","DUZ":"520824652", "lastName": "TESTER0", "firstName": "JOHN", "email": "john.tester0@va.gov", "samAccountName": "vhatst1234567890", "jti": "c1211760-a083-4088-a55f-e02691afe1c3"},
-  {"secId": "1234567899", "DUZ":"10000000054","lastName": "MASCLERK", "firstName": "ONE", "email": "ONE.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLO", "jti": "d9db5b36-4090-4b33-a0b1-20a0c7fddce7"},
-  {"secId": "1234567899", "DUZ":"10000000055","lastName": "MASCLERK", "firstName": "TWO", "email": "TWO.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLT", "jti": "d9db5b36-4090-4b34-a0b2-20a0c7fddce7"},
-  {"secId": "1234567899", "DUZ":"10000000078","lastName": "MASCLERK", "firstName": "THREE", "email": "THREE.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLTH", "jti": "d9db5b36-4092-5b32-a0b1-20a0c7fddce7"},
-  {"secId": "1234567899", "DUZ":"10000000079","lastName": "MASCLERK", "firstName": "FOUR", "email": "FOUR.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLF", "jti": "d9db5b36-5090-3b32-a0b1-20a0c7fddce7"},
-  {"secId": "1234567899", "DUZ":"10000000080","lastName": "MASCLERK", "firstName": "FIVE", "email": "FIVE.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLFI", "jti": "d9db5b36-6090-2b32-a0b1-20a0c7fddce7"},
-  {"secId": "1234567890","DUZ":"520824652", "lastName": "TESTER0", "firstName": "JOHN", "email": "john.tester0@va.gov", "samAccountName": "vhatst1234567890", "jti": "c1211760-a083-4088-a55f-e02691afe1c3"},
+   {"secId": "1234567890","DUZ":"520824652", "lastName": "TESTER0", "firstName": "JOHN", "email": "john.tester0@va.gov", "samAccountName": "vhatst1234567890", "jti": "c1211760-a083-4088-a55f-e02691afe1c3"},
   {"secId": "1234567891", "DUZ":"520824652","lastName": "TESTER1", "firstName": "JANE", "email": "jane.tester1@va.gov", "samAccountName": "vhatst1234567891", "jti": "914a06e6-8478-48c5-8902-a580cca0efe7"},
   {"secId": "1234567892","DUZ":"520824652", "lastName": "TESTER2", "firstName": "ROBERT", "email": "robert.tester2@va.gov", "samAccountName": "vhatst1234567892", "jti": "00e290bb-af10-4025-bac0-8e6d7402588b"},
   {"secId": "1234567893", "DUZ":"520824652","lastName": "TESTER3", "firstName": "SANDRA", "email": "sandra.tester3@va.gov", "samAccountName": "vhatst1234567893", "jti": "fcfbba2d-cbb5-4e46-9980-dbd031c0ad0b"},
@@ -30,6 +26,11 @@ var users = [
   {"secId": "1234567897", "DUZ":"520824652","lastName": "TESTER7", "firstName": "SOPHIA", "email": "sophia.tester7@va.gov", "samAccountName": "vhatst1234567897", "jti": "94736ec8-5581-4ffd-9a5c-6091922ce891"},
   {"secId": "1234567898", "DUZ":"520824652","lastName": "TESTER8", "firstName": "ISABELLA", "email": "isabella.tester8@va.gov", "samAccountName": "vhatst1234567898", "jti": "f472e3a1-30f2-4ace-822d-978722b49c2e"},
   {"secId": "1234567899", "DUZ":"520824652","lastName": "TESTER9", "firstName": "VIOLET", "email": "violet.tester9@va.gov", "samAccountName": "vhatst1234567899", "jti": "d9db5b36-4090-4b32-a0b1-20a0c7fddce7"},
+  {"secId": "1234567899", "DUZ":"10000000054","lastName": "MASCLERK", "firstName": "ONE", "email": "ONE.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLO", "jti": "d9db5b36-4090-4b33-a0b1-20a0c7fddce7"},
+  {"secId": "1234567899", "DUZ":"10000000055","lastName": "MASCLERK", "firstName": "TWO", "email": "TWO.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLT", "jti": "d9db5b36-4090-4b34-a0b2-20a0c7fddce7"},
+  {"secId": "1234567899", "DUZ":"10000000078","lastName": "MASCLERK", "firstName": "THREE", "email": "THREE.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLTH", "jti": "d9db5b36-4092-5b32-a0b1-20a0c7fddce7"},
+  {"secId": "1234567899", "DUZ":"10000000079","lastName": "MASCLERK", "firstName": "FOUR", "email": "FOUR.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLF", "jti": "d9db5b36-5090-3b32-a0b1-20a0c7fddce7"},
+  {"secId": "1234567899", "DUZ":"10000000080","lastName": "MASCLERK", "firstName": "FIVE", "email": "FIVE.MASCLERK@va.gov", "samAccountName": "vhatSTMASCLFI", "jti": "d9db5b36-6090-2b32-a0b1-20a0c7fddce7"}
 
 ]
 
@@ -58,7 +59,7 @@ function getLists(){
       ,function (response) {
        var newOptionsSelect
       response.payload.forEach((e,i) => {
-        newOptionsSelect = newOptionsSelect + '<option value="'+e.id+'">'+e.name+ '  Role:  '+e.role+'</option>';
+        newOptionsSelect = newOptionsSelect + '<option data-sta3n="'+e.stationId+'"value="'+e.id+'">'+e.name+ '  Role:  '+e.role+'</option>';
       })
       $('#listId').append( newOptionsSelect )
     })
@@ -184,12 +185,21 @@ $('#editLists').on('click',function(){
   })
     
 });
+$('#listId').change(function(){
+  var selected = $(this).find('option:selected');
+ // var extra = selected.data('foo'); 
+console.log(selected.val())
+console.log(selected.data('sta3n'))
+
+});
+
 $('#showAll').on('click',function(){
- 
+ console.log(curClincListData.details)
   showState='All'
   tableFilter()
 })
 $('#showRole').on('click',function(){
+  console.log(curClincListData.details)
   showState=curClincListData.details.role
   tableFilter()
 })
@@ -327,7 +337,7 @@ document.getElementById("showRole").style.display = "inline"
     $('#roleName').val(result[0].role)
 
 })
- // updateTable([],'dataTable')
+  updateTable([],'dataTable')
   var token={}
   $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
       token=tokenResponse
@@ -339,7 +349,7 @@ document.getElementById("showRole").style.display = "inline"
       }
     });
     $.getJSON(
-           'https://dev.vse-wf-api.va.gov/api/v1/vista-sites/500/users/'+duz+'/appointments?clinic_list_id='+document.getElementById('listId').value
+           'https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/appointments?clinic_list_id='+document.getElementById('listId').value
       //'http://localhost:4567/list?listId='+document.getElementById('listId').value
       ,function (response) {
       updateTable(response.data,'dataTable')
@@ -367,7 +377,7 @@ $("#dataTable").on('click', '#nextStep', function() {
           'Authorization' : 'Bearer '+token.token,
         }
       });
-      $.post('https://dev.vse-wf-api.va.gov/api/v1/vista-sites/500/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
+      $.post('https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
         {
         "workflow_step_id": nextStep,
       "_method":"put"
@@ -403,7 +413,7 @@ if(stepId>0){
           'Authorization' : 'Bearer '+token.token,
         }
       });
-      $.post('https://dev.vse-wf-api.va.gov/api/v1/vista-sites/500/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
+      $.post('https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
         {
         "workflow_step_id": stepId,
       "_method":"put"
@@ -441,7 +451,7 @@ $("#dataTable").on('click', '#Complete', function() {
           'Authorization' : 'Bearer '+token.token,
         }
       });
-      $.post('https://dev.vse-wf-api.va.gov/api/v1/vista-sites/500/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
+      $.post('https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
         {
         "workflow_step_id": nextStep,
       "_method":"put"
@@ -471,6 +481,7 @@ function updateTable(tdata,tableTag,filter){
         'clinicIen':e.attributes.resource.clinicIen,
         'Clinic':e.attributes.clinic.name,
         'PatientName':e.attributes.patient.name,
+        'NeedsInsurance':e.attributes.patient.insuranceVerify ==1 ? 'Needs Update': 'Up To Date',
         'Step':e.attributes.workflow.currentStatus,
         'Action':'<div class="form-inline"><div class="form-group mx-sm-3 mb-2">'+steps+'  <button class="btn btn-warning" id="nextStep">Next</button>   <button class="btn btn-primary" id="Complete">Complete</button></div></div>'
         

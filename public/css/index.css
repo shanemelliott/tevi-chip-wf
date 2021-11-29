@@ -2,6 +2,18 @@
   box-sizing:border-box;
 }
 
+
+.panel-primary .panel-heading{
+background-color:#112e51
+}
+.bg-primary {
+    background-color:#112e51
+}
+
+.btn-primary
+{
+    background-color:#112e51
+}
 .ow {
     overflow-wrap: normal;
     hyphens: auto;
@@ -35,7 +47,7 @@ input:valid { border: 2px solid black;}
     padding-bottom: 12px;
     padding-left:10px;
     text-align: left;
-    background-color: #337ab7;
+    background-color: #112e51;
     color: white;
 }
    #dataTable {
@@ -61,16 +73,6 @@ input:valid { border: 2px solid black;}
 
 #dataTable tr:hover {background-color: #ddd;}
 
-#dataTable th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    padding-left:10px;
-    text-align: left;
-    background-color: #337ab7;
-    color: white;
-   
-
-}
 
 #responseTable {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
