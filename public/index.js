@@ -4,10 +4,11 @@ $(function () {
 var steps=[]
 var stepData = []
 var curClincListData = {}
-var duz="520824652"
-var sta3n="500"
+var duz="520824652" //520881829
+var sta3n="500"//442
 var showState='All'
 var tokenNumber = '0'
+var FilterCol = 7
 
 document.getElementById("listDisplay").style.display = "none"
 document.getElementById("dataDisplay").style.display = "none"
@@ -106,6 +107,7 @@ function setSteps(data){
 }
 
 function tableFilter(){
+
   var data=showState
   if(data=='All'){
     $("#dataTable").find("tr").show();
@@ -118,7 +120,7 @@ function tableFilter(){
     data=data.toLowerCase()
     rows.each(function(i,x){
       if (i>0){
-        var td = x.getElementsByTagName("td")[5];
+        var td = x.getElementsByTagName("td")[FilterCol];
         if(td){
           txtValue = td.textContent || td.innerText;
           if(txtValue.toLowerCase().indexOf(data)>-1){
@@ -165,7 +167,7 @@ $('#editLists').on('click',function(){
         'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/list-items/'+document.getElementById('listId').value
         ,function (response) {
         curClincListData.list=response.payload
-       
+       console.log(response)
         var newOptionsSelect
         response.payload.forEach((e,i) => {
           newOptionsSelect = newOptionsSelect + '<option value="'+e.ien+'">'+e.name+ '</option>';
@@ -190,7 +192,7 @@ $('#listId').change(function(){
  // var extra = selected.data('foo'); 
 console.log(selected.val())
 console.log(selected.data('sta3n'))
-
+sta3n=selected.data('sta3n')
 });
 
 $('#showAll').on('click',function(){
@@ -352,6 +354,12 @@ document.getElementById("showRole").style.display = "inline"
            'https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/appointments?clinic_list_id='+document.getElementById('listId').value
       //'http://localhost:4567/list?listId='+document.getElementById('listId').value
       ,function (response) {
+        console.log('found ' +response.data.length + ' Appts')
+      if(response.data.length ==0 ){
+        console.log("no pts")
+        document.getElementById("resultDisplay").style.display = ""
+        $('#postResult').html('Found ' +response.data.length + ' Appts');
+      }
       updateTable(response.data,'dataTable')
       tableFilter()
     }).catch(function(err){
@@ -482,10 +490,12 @@ function updateTable(tdata,tableTag,filter){
         'Clinic':e.attributes.clinic.name,
         'PatientName':e.attributes.patient.name,
         'NeedsInsurance':e.attributes.patient.insuranceVerify ==1 ? 'Needs Update': 'Up To Date',
+        'DemographicsUpdate':e.attributes.demographicsNeedsUpdate=='true' ? 'Up To Date': 'Needs Update',
         'Step':e.attributes.workflow.currentStatus,
         'Action':'<div class="form-inline"><div class="form-group mx-sm-3 mb-2">'+steps+'  <button class="btn btn-warning" id="nextStep">Next</button>   <button class="btn btn-primary" id="Complete">Complete</button></div></div>'
         
       }
+      
       data[i] = obj
      });
      tdata=data
