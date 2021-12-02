@@ -8,7 +8,7 @@ var duz="520824652" //520881829
 var sta3n="500"//442
 var showState='All'
 var tokenNumber = '0'
-var FilterCol = 7
+var FilterCol = 9
 
 document.getElementById("listDisplay").style.display = "none"
 document.getElementById("dataDisplay").style.display = "none"
@@ -193,6 +193,13 @@ $('#listId').change(function(){
 console.log(selected.val())
 console.log(selected.data('sta3n'))
 sta3n=selected.data('sta3n')
+if(sta3n!==500){
+  duz='520881829'
+  console.log('set duz to:'+duz)
+}else{
+  duz='520824652'
+  console.log('set duz to:'+duz)
+}
 });
 
 $('#showAll').on('click',function(){
@@ -328,6 +335,7 @@ document.getElementById("dataDisplay").style.display = "block"
 document.getElementById("listDisplay").style.display = "none"
 document.getElementById("showAll").style.display = "none"
 document.getElementById("showRole").style.display = "inline"
+document.getElementById("resultDisplay").style.display = "none"
 
  //add role
  $.getJSON(
@@ -354,6 +362,7 @@ document.getElementById("showRole").style.display = "inline"
            'https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/appointments?clinic_list_id='+document.getElementById('listId').value
       //'http://localhost:4567/list?listId='+document.getElementById('listId').value
       ,function (response) {
+        console.log(response)
         console.log('found ' +response.data.length + ' Appts')
       if(response.data.length ==0 ){
         console.log("no pts")
@@ -488,14 +497,15 @@ function updateTable(tdata,tableTag,filter){
         'dfn':e.attributes.dfn,
         'clinicIen':e.attributes.resource.clinicIen,
         'Clinic':e.attributes.clinic.name,
+        'Time': new Date(e.attributes.startTime).toLocaleTimeString('en-US'),
+        'Status':e.attributes.checkInSteps[0] ? e.attributes.checkInSteps[0]['status'] :'' ,
         'PatientName':e.attributes.patient.name,
         'NeedsInsurance':e.attributes.patient.insuranceVerify ==1 ? 'Needs Update': 'Up To Date',
-        'DemographicsUpdate':e.attributes.demographicsNeedsUpdate=='true' ? 'Up To Date': 'Needs Update',
+        'DemographicsUpdate':e.attributes.patient.demographicsNeedsUpdate=='true' ? 'Up To Date': 'Needs Update',
         'Step':e.attributes.workflow.currentStatus,
         'Action':'<div class="form-inline"><div class="form-group mx-sm-3 mb-2">'+steps+'  <button class="btn btn-warning" id="nextStep">Next</button>   <button class="btn btn-primary" id="Complete">Complete</button></div></div>'
         
       }
-      
       data[i] = obj
      });
      tdata=data
