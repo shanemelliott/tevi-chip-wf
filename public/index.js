@@ -358,6 +358,7 @@ document.getElementById("resultDisplay").style.display = "none"
         'Authorization' : 'Bearer '+token.token,
       }
     });
+    console.log(sta3n,duz)
     $.getJSON(
            'https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/appointments?clinic_list_id='+document.getElementById('listId').value
       //'http://localhost:4567/list?listId='+document.getElementById('listId').value
