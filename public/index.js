@@ -8,7 +8,7 @@ var duz="520824652" //520881829
 var sta3n="500"//442
 var showState='All'
 var tokenNumber = '0'
-var FilterCol = 9
+var FilterCol = 10
 
 document.getElementById("listDisplay").style.display = "none"
 document.getElementById("dataDisplay").style.display = "none"
@@ -60,16 +60,28 @@ function getLists(){
       ,function (response) {
        var newOptionsSelect
       response.payload.forEach((e,i) => {
-        newOptionsSelect = newOptionsSelect + '<option data-sta3n="'+e.stationId+'"value="'+e.id+'">'+e.name+ '  Role:  '+e.role+'</option>';
+        newOptionsSelect = newOptionsSelect + '<option data-role="'+e.role+'" data-sta3n="'+e.stationId+'"value="'+e.id+'">'+e.name+ '  Role:  '+e.role+'</option>';
       })
       $('#listId').append( newOptionsSelect )
+      var selected =  $('#listId').find('option:selected');
+     sta3n=selected.data('sta3n')
+    if(sta3n!==500){
+      duz='520881829'
+      console.log('set duz to:'+duz)
+    }else{
+      duz='520824652'
+      console.log('set duz to:'+duz)
+    }
     })
   })
+
 }
 
 function getSteps(){
   var token={}
   var steps=[]
+
+  //To get generic Workfow , will be replaced by the per appt. workflow object. 
   $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
       token=tokenResponse
   }).then(function(token){
@@ -176,6 +188,9 @@ $('#editLists').on('click',function(){
         .empty()
         .append( newOptionsSelect )
       })
+      var selected =  $('#listId').find('option:selected');
+      var role=selected.data('role')
+      $('#roleName').val(role)
      
   })
 
@@ -189,9 +204,6 @@ $('#editLists').on('click',function(){
 });
 $('#listId').change(function(){
   var selected = $(this).find('option:selected');
- // var extra = selected.data('foo'); 
-console.log(selected.val())
-console.log(selected.data('sta3n'))
 sta3n=selected.data('sta3n')
 if(sta3n!==500){
   duz='520881829'
@@ -382,7 +394,7 @@ document.getElementById("resultDisplay").style.display = "none"
 $("#dataTable").on('click', '#nextStep', function() {
   var self = $(this).closest("tr");
   let thisStep= self.find(".Step").text()
-  var apptIen = self.find(".appointmentIen").text();
+  var apptIen = self.find(".AppointmentIen").text();
   var clinicIen = self.find(".clinicIen").text();
   let step = stepData.find(x => x.name === thisStep);
   let nextStep = stepData[stepData.indexOf(step)+1].id
@@ -418,7 +430,7 @@ $("#userId").on('change', function() {
 $("#dataTable").on('change', '#stepSelect', function() {
   var self = $(this).closest("tr");
   var stepId = self.find('#stepSelect').val()
-  var apptIen = self.find(".appointmentIen").text();
+  var apptIen = self.find(".AppointmentIen").text();
   var dfn = self.find(".dfn").text();
   var clinicIen = self.find(".clinicIen").text();
  // alert("Selected row values are \nappointmentIen=" + apptIen + " \ndfn=" + dfn+ " \nclinicIen=" + clinicIen+ " \nstepId=" + stepId);
@@ -455,7 +467,7 @@ if(stepId>0){
 $("#dataTable").on('click', '#Complete', function() {
   var self = $(this).closest("tr");
   let thisStep= self.find(".Step").text()
-  var apptIen = self.find(".appointmentIen").text();
+  var apptIen = self.find(".AppointmentIen").text();
   var clinicIen = self.find(".clinicIen").text();
   let step = stepData.find(x => x.name === thisStep);
   let nextStep = stepData[stepData.length-1].id
@@ -490,11 +502,20 @@ $("#dataTable").on('click', '#Complete', function() {
 function updateTable(tdata,tableTag,filter){
   
     var data=[]
-    var hiddenFields = ["appointmentIen","dfn","clinicIen"]
+    //var hiddenFields = ["AppointmentIen","dfn","clinicIen"]
+    var hiddenFields = [,"dfn","clinicIen"]
+    var apptSteps =[]
    
     tdata.forEach((e,i) => {
-       var obj={
-        'appointmentIen':e.attributes.appointmentIen,
+    var StepsSelect='<option value="-1">Select Action...</option>'
+    //to replace the generic workflow. 
+      e.attributes.workflow.availableSteps.forEach(function(s){
+      StepsSelect = StepsSelect + '<option value="'+s.id+'">'+s.name+ '</option>';
+     })
+    apptSteps='<select class="form-control" id="stepSelect" style="width:240px;">'+StepsSelect+'</select>'
+
+     var obj={
+        'AppointmentIen':e.attributes.appointmentIen,
         'dfn':e.attributes.dfn,
         'clinicIen':e.attributes.resource.clinicIen,
         'Clinic':e.attributes.clinic.name,
@@ -505,7 +526,8 @@ function updateTable(tdata,tableTag,filter){
         'NeedsInsurance':e.attributes.patient.insuranceVerify ==1 ? 'Needs Update': 'Up To Date',
         'DemographicsUpdate':e.attributes.patient.demographicsNeedsUpdate=='true' ? 'Up To Date': 'Needs Update',
         'Step':e.attributes.workflow.currentStatus,
-        'Action':'<div class="form-inline"><div class="form-group mx-sm-3 mb-2">'+steps+'  <button class="btn btn-warning" id="nextStep">Next</button>   <button class="btn btn-primary" id="Complete">Complete</button></div></div>'
+        // generic workflow =>  'Action':'<div class="form-inline"><div class="form-group mx-sm-3 mb-2">'+steps+'  <button class="btn btn-warning" id="nextStep">Next</button>   <button class="btn btn-primary" id="Complete">Complete</button></div></div>'
+        'Action':'<div class="form-inline"><div class="form-group mx-sm-3 mb-2">'+apptSteps+'  <button class="btn btn-warning" id="nextStep">Next</button>   <button class="btn btn-primary" id="Complete">Complete</button></div></div>'
         
       }
       data[i] = obj
