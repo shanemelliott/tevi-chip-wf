@@ -524,7 +524,7 @@ function updateTable(tdata,tableTag,filter){
         'CheckIn':e.attributes.checkIn==""?"":"Checked In",
         'PatientName':e.attributes.patient.name,
         'NeedsInsurance':e.attributes.patient.insuranceVerify ==1 ? 'Needs Update': 'Up To Date',
-        'DemographicsUpdate':e.attributes.patient.demographicsNeedsUpdate=='true' ? 'Up To Date': 'Needs Update',
+        'DemographicsUpdate':e.attributes.patient.demographicsNeedsUpdate==true ?  'Needs Update':'Up To Date',
         'Step':e.attributes.workflow.currentStatus,
         // generic workflow =>  'Action':'<div class="form-inline"><div class="form-group mx-sm-3 mb-2">'+steps+'  <button class="btn btn-warning" id="nextStep">Next</button>   <button class="btn btn-primary" id="Complete">Complete</button></div></div>'
         'Action':'<div class="form-inline"><div class="form-group mx-sm-3 mb-2">'+apptSteps+'  <button class="btn btn-warning" id="nextStep">Next</button>   <button class="btn btn-primary" id="Complete">Complete</button></div></div>'
