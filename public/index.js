@@ -9,6 +9,7 @@ var sta3n="500"//442
 var showState='All'
 var tokenNumber = '0'
 var FilterCol = 10
+var sortColumn = 7
 
 document.getElementById("listDisplay").style.display = "none"
 document.getElementById("dataDisplay").style.display = "none"
@@ -585,8 +586,8 @@ function updateTable(tdata,tableTag,filter){
          shouldSwitch = false;
          /*Get the two elements you want to compare,
          one from current row and one from the next:*/
-         x = rows[i].getElementsByTagName("TD")[3];
-         y = rows[i + 1].getElementsByTagName("TD")[3];
+         x = rows[i].getElementsByTagName("TD")[sortColumn];
+         y = rows[i + 1].getElementsByTagName("TD")[sortColumn];
          //check if the two rows should switch place:
          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
            //if so, mark as a switch and break the loop:
