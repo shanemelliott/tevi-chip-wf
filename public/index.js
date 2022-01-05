@@ -10,10 +10,9 @@ var showState='All'
 var tokenNumber = '0'
 var FilterCol = 10
 var sortColumn = 7
-var env = 'staging'
+var env = 'staging.' //add a . and leave '' for prod. ['staginig.','dev.','']
 var token={}
-//jwt lasts 8 hours...?
-//to do: add jwt exp checking. 
+
 
 
 document.getElementById("listDisplay").style.display = "none"
@@ -41,6 +40,9 @@ var users = [
 
 ]
 
+
+//jwt lasts 8 hours...?
+//to do: add jwt exp checking. 
 const getToken = new Promise((resolve, reject) => {  
   if(token.token) {    
       resolve(token);  
@@ -108,7 +110,7 @@ function getSteps(){
       }
     });
     $.getJSON(
-      'https://'+env+'.vse-wf-api.va.gov/api/v1/workflows'
+      'https://'+env+'vse-wf-api.va.gov/api/v1/workflows'
      // 'http://internal-clinician-workflow-api-lb-dev-1492574551.us-gov-west-1.elb.amazonaws.com/api/v1/workflows'
       //'http://localhost:4567/steps'
       ,function (response) {
@@ -381,7 +383,7 @@ document.getElementById("resultDisplay").style.display = "none"
     });
     console.log(sta3n,duz)
     $.getJSON(
-           'https://'+env+'.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/appointments?clinic_list_id='+document.getElementById('listId').value
+           'https://'+env+'vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/appointments?clinic_list_id='+document.getElementById('listId').value
       //'http://localhost:4567/list?listId='+document.getElementById('listId').value
       ,function (response) {
         console.log(response)
@@ -414,7 +416,7 @@ $("#dataTable").on('click', '#nextStep', function() {
           'Authorization' : 'Bearer '+token.token,
         }
       });
-      $.post('https://'+env+'.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
+      $.post('https://'+env+'vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
         {
         "workflow_step_id": nextStep,
       "_method":"put"
@@ -448,7 +450,7 @@ if(stepId>0){
           'Authorization' : 'Bearer '+token.token,
         }
       });
-      $.post('https://'+env+'.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
+      $.post('https://'+env+'vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
         {
         "workflow_step_id": stepId,
       "_method":"put"
@@ -484,7 +486,7 @@ $("#dataTable").on('click', '#Complete', function() {
           'Authorization' : 'Bearer '+token.token,
         }
       });
-      $.post('https://'+env+'.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
+      $.post('https://'+env+'vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
         {
         "workflow_step_id": nextStep,
       "_method":"put"
