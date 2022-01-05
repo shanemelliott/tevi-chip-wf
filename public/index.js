@@ -10,6 +10,11 @@ var showState='All'
 var tokenNumber = '0'
 var FilterCol = 10
 var sortColumn = 7
+var env = 'staging'
+var token={}
+//jwt lasts 8 hours...?
+//to do: add jwt exp checking. 
+
 
 document.getElementById("listDisplay").style.display = "none"
 document.getElementById("dataDisplay").style.display = "none"
@@ -36,6 +41,18 @@ var users = [
 
 ]
 
+const getToken = new Promise((resolve, reject) => {  
+  if(token.token) {    
+      resolve(token);  
+  } else {    
+    $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
+      token=tokenResponse
+    }).then(function(token){
+      resolve(token);  
+    })
+  }
+});
+
 function getUsers(){
   var newOptionsSelect
   users.forEach((e,i) => {
@@ -46,19 +63,18 @@ function getUsers(){
 
 
 function getLists(){
-  var token={}
-  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
-      token=tokenResponse
-  }).then(function(token){
+
+  getToken.then(function(token){
     $.ajaxSetup({
       headers : {
         'Authorization' : 'Bearer '+token.token,
+        'X-OCTO-VISTA-API': 'ZRBxKi@rXJOTKGBzgR2SNEYS^zQP5p'
       }
     });
     $.getJSON(
       'https://staging.api.vetext.va.gov/vsecs-api/api/v1_0_0/pcl/lists'
-     //'http://localhost:4567/lists'
       ,function (response) {
+        console.log(response)
        var newOptionsSelect
       response.payload.forEach((e,i) => {
         newOptionsSelect = newOptionsSelect + '<option data-role="'+e.role+'" data-sta3n="'+e.stationId+'"value="'+e.id+'">'+e.name+ '  Role:  '+e.role+'</option>';
@@ -83,16 +99,16 @@ function getSteps(){
   var steps=[]
 
   //To get generic Workfow , will be replaced by the per appt. workflow object. 
-  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
-      token=tokenResponse
-  }).then(function(token){
+
+  getToken.then(function(token){
+
     $.ajaxSetup({
       headers : {
         'Authorization' : 'Bearer '+token.token,
       }
     });
     $.getJSON(
-      'https://dev.vse-wf-api.va.gov/api/v1/workflows'
+      'https://'+env+'.vse-wf-api.va.gov/api/v1/workflows'
      // 'http://internal-clinician-workflow-api-lb-dev-1492574551.us-gov-west-1.elb.amazonaws.com/api/v1/workflows'
       //'http://localhost:4567/steps'
       ,function (response) {
@@ -275,9 +291,7 @@ $('#saveList').on('click',function(){
 
   if (added.length > 0){
       added.forEach(function(e){
-      $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
-        token=tokenResponse
-      }).then(function(token){
+        getToken.then(function(token){
         $.ajaxSetup({
           headers : {
             'Authorization' : 'Bearer '+token.token,
@@ -294,9 +308,7 @@ $('#saveList').on('click',function(){
     if(deleted.length >0){
       deleted.forEach(function(e){
       var result = $.grep(curClincListData.list, function(f){ return f.ien == e.ien; });
-      $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
-        token=tokenResponse
-      }).then(function(token){
+      getToken.then(function(token){
         $.ajaxSetup({
           headers : {
            'Authorization' : 'Bearer '+token.token,
@@ -323,9 +335,7 @@ $('#saveList').on('click',function(){
 
 
 
- $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
-  token=tokenResponse
-}).then(function(token){
+getToken.then(function(token){
  $.ajaxSetup({
   headers : {
     'Authorization' : 'Bearer '+token.token,
@@ -361,10 +371,8 @@ document.getElementById("resultDisplay").style.display = "none"
 
 })
   updateTable([],'dataTable')
-  var token={}
-  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
-      token=tokenResponse
-     }).then(function(token){
+
+  getToken.then(function(token){
 
     $.ajaxSetup({
       headers : {
@@ -373,7 +381,7 @@ document.getElementById("resultDisplay").style.display = "none"
     });
     console.log(sta3n,duz)
     $.getJSON(
-           'https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/appointments?clinic_list_id='+document.getElementById('listId').value
+           'https://'+env+'.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/appointments?clinic_list_id='+document.getElementById('listId').value
       //'http://localhost:4567/list?listId='+document.getElementById('listId').value
       ,function (response) {
         console.log(response)
@@ -400,15 +408,13 @@ $("#dataTable").on('click', '#nextStep', function() {
   let step = stepData.find(x => x.name === thisStep);
   let nextStep = stepData[stepData.indexOf(step)+1].id
  if (nextStep){
-  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
-    token=tokenResponse
-   }).then(function(token){
+  getToken.then(function(token){
       $.ajaxSetup({
         headers : {
           'Authorization' : 'Bearer '+token.token,
         }
       });
-      $.post('https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
+      $.post('https://'+env+'.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
         {
         "workflow_step_id": nextStep,
       "_method":"put"
@@ -436,15 +442,13 @@ $("#dataTable").on('change', '#stepSelect', function() {
   var clinicIen = self.find(".clinicIen").text();
  // alert("Selected row values are \nappointmentIen=" + apptIen + " \ndfn=" + dfn+ " \nclinicIen=" + clinicIen+ " \nstepId=" + stepId);
 if(stepId>0){
-  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
-    token=tokenResponse
-   }).then(function(token){
+  getToken.then(function(token){
       $.ajaxSetup({
         headers : {
           'Authorization' : 'Bearer '+token.token,
         }
       });
-      $.post('https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
+      $.post('https://'+env+'.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
         {
         "workflow_step_id": stepId,
       "_method":"put"
@@ -474,15 +478,13 @@ $("#dataTable").on('click', '#Complete', function() {
   let nextStep = stepData[stepData.length-1].id
   
  if (nextStep){
-  $.getJSON('/token/'+tokenNumber,function (tokenResponse) {
-    token=tokenResponse
-   }).then(function(token){
+  getToken.then(function(token){
       $.ajaxSetup({
         headers : {
           'Authorization' : 'Bearer '+token.token,
         }
       });
-      $.post('https://dev.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
+      $.post('https://'+env+'.vse-wf-api.va.gov/api/v1/vista-sites/'+sta3n+'/users/'+duz+'/clinics/'+ clinicIen+ '/appointments/'+apptIen+'/status',
         {
         "workflow_step_id": nextStep,
       "_method":"put"

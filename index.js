@@ -31,21 +31,24 @@ app.use(function (req, res, next) {
 //routes
 app.get('/token/:idx', (request, response) => {
     //token faker stolen from Andy (https://github.com/department-of-veterans-affairs/octo-ssoi-jwt-dev)
+    let idx = request.params.idx;
+    idx = isNaN(idx) ? 0 : idx;
     if(config.env=='dev'){
-        let idx = request.params.idx;
-        idx = isNaN(idx) ? 0 : idx;
+        
         let token = jwtfaker.createToken(idx);
         return  response.send(JSON.stringify({'token':token}));
     }else
+    console.log('using SQA')
     exec('sts-token-generator.exe --env ' + config.env, (err, stdout, stderr) => {
-
+      
         var token=JSON.parse(stdout)
+        console.log(token)
         var payload={}
         payload=token
         if (err) {
           return response.send(JSON.stringify(err));
         }
- 
+        console.log(payload)
         return  response.send(JSON.stringify(payload));
     });
 
@@ -191,6 +194,6 @@ var server = http.createServer(app);
 var port = process.env.PORT || 4567;
 server.listen(port, () => {
   console.log('Express server running on *:' + port);
-  console.log('using '+config.env+ ' env')
+  console.log('Staring using '+config.env+ ' env')
 });
 
